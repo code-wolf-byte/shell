@@ -1,45 +1,29 @@
-use druid::widget::{Button, Flex, Label};
-use druid::{AppLauncher, LocalizedString, PlatformError, Widget, WidgetExt, WindowDesc, Data};
-
-#[derive(Clone, Data)]
-struct Counter(i32);
-
-fn main() -> Result<(), PlatformError> {
-    // Window builder. We set title and size
-    let main_window = WindowDesc::new(ui_builder)
-        .title("Hello, Druid!")
-        .window_size((200.0, 100.0));
-
-    // Data to be used in the app (=state)
-    let data: Counter = Counter(0);
-
-    // Run the app
-    AppLauncher::with_window(main_window)
-        .launch(data)
+use std::env;
+use crate::utils::help;
+// use std::fs;
+// use std::net::{TcpStream, TcpListener};
+// use webbrowser;
+mod utils;
+fn main(){
+    let args: Vec<String> = env::args().collect();
+    let query = &args[1];
+    utils::commands::help();
+    // if query.eq("help"){
+    //     help::help();
+    // } else if query.eq("serve"){
+    //     let contents = fs::read_to_string("index.html").expect("Something went wrong reading the file");
+    //     println!("Serving index.html");
+    //     println!("Press Ctrl+C to stop");
+    //     let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
+    //     println!("Listening for connections on port {}", 8080);
+    //     if webbrowser::open("http://localhost:8080").is_ok() {
+    //         println!("Opened browser");
+    //     }
+    //     else {
+    //         panic!("Failed to open browser");
+    //     }
+    // }
 }
 
-fn ui_builder() -> impl Widget<Counter> {
-    // The label text will be computed dynamically based on the current locale and count
-    let text = LocalizedString::new("hello-counter")
-        .with_arg("count", |data: &Counter, _env| (*data).0.into());
-    let label = Label::new(text).padding(5.0).center();
 
-    // Two buttons with on_click callback
-    let button_plus = Button::new("+1")
-        .on_click(|_ctx, data: &mut Counter, _env| (*data).0 += 1)
-        .padding(5.0);
-    let button_minus = Button::new("-1")
-        .on_click(|_ctx, data: &mut Counter, _env| (*data).0 -= 1)
-        .padding(5.0);
 
-    // Container for the two buttons
-    let flex = Flex::row()
-        .with_child(button_plus)
-        .with_spacer(1.0)
-        .with_child(button_minus);
-
-    // Container for the whole UI
-    Flex::column()
-        .with_child(label)
-        .with_child(flex)
-}
