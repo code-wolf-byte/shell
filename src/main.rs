@@ -1,29 +1,43 @@
 use std::env;
-use crate::utils::help;
-// use std::fs;
-// use std::net::{TcpStream, TcpListener};
-// use webbrowser;
-mod utils;
-fn main(){
-    let args: Vec<String> = env::args().collect();
-    let query = &args[1];
-    utils::commands::help();
-    // if query.eq("help"){
-    //     help::help();
-    // } else if query.eq("serve"){
-    //     let contents = fs::read_to_string("index.html").expect("Something went wrong reading the file");
-    //     println!("Serving index.html");
-    //     println!("Press Ctrl+C to stop");
-    //     let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
-    //     println!("Listening for connections on port {}", 8080);
-    //     if webbrowser::open("http://localhost:8080").is_ok() {
-    //         println!("Opened browser");
-    //     }
-    //     else {
-    //         panic!("Failed to open browser");
-    //     }
-    // }
+slint::include_modules!();
+
+
+
+use crate::commands::python;
+mod commands;
+
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
 }
 
+pub fn help(){
+    println!("Commands:");
+    println!("    help: Display this help message");
+    println!("    serve: Start a web server");
+}
+fn main()-> Result<(), slint::PlatformError> {
+    let args: Vec<String> = env::args().collect();
+
+    // Check if at least one argument is provided
+    if args.len() < 2 {
+        println!("No command provided. Use 'help' for usage information.");
+        return Ok(());
+    }
+
+    match args[1].as_str() {
+        "help" => Ok(help()),
+        "python" => Ok(commands::python::command_handler(args)),
+        "serve" => {
+            let ui = Example::new()?;
+            ui.run()
+        }
+        // Add other commands here
+        _ => {
+            println!("Unknown command {}. Use 'help' for usage information.", args[1]);
+            return Ok(());
+        }
+
+    }
+}
 
 
